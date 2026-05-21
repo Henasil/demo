@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Вход | Пассажиры РФ{% endblock %}
+{% block content %}
+<section class="auth-layout container-fluid">
+    <div class="auth-info">
+        <p class="eyebrow">Очное обучение водителей</p>
+        <h1>Войдите в портал пассажиров РФ</h1>
+        <p>Оформляйте заявки на курсы водителей автобуса, электробуса и трамвая, отслеживайте обучение и оставляйте отзывы.</p>
+    </div>
+    <form class="card form-card needs-validation" method="post" novalidate>
+        {% csrf_token %}
+        <h2>Авторизация</h2>
+        {% for field in form %}
+            <label>
+                <span>{{ field.label }}</span>
+                {{ field }}
+                {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+            </label>
+        {% endfor %}
+        <button class="btn btn-primary w-100" type="submit">Войти</button>
+        <p class="form-link">Еще не зарегистрированы? <a href="{% url 'register' %}">Регистрация</a></p>
+    </form>
+</section>
+{% endblock %}
