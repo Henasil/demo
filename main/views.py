@@ -16,7 +16,7 @@ def index(request):
         return redirect('profile')
     return redirect('login')
 
-
+# регистарция 
 def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -28,7 +28,7 @@ def register_view(request):
         form = RegisterForm()
     return render(request, 'register.html', {'form': form})
 
-
+# Авторизация 
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('admin_panel' if request.user.username == ADMIN_USERNAME else 'profile')

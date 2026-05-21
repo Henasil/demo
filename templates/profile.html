@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Личный кабинет | Пассажиры РФ{% endblock %}
+{% block content %}
+<section class="profile-hero">
+    <div>
+        <p class="eyebrow">Личный кабинет</p>
+        <h1>Здравствуйте, {{ user.profile.full_name }}!</h1>
+        <p>Здесь собрана история ваших заявок на очные курсы обучения водителей.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'create_application' %}">Записаться на курс</a>
+</section>
+
+<section class="slider" aria-label="Фотографии обучения пассажирскому транспорту">
+    <div class="slider-track">
+        <img class="slide is-active" src="{% static 'img/slide1.png' %}" alt="Автобус">
+        <img class="slide" src="{% static 'img/slide2.png' %}" alt="Электробус">
+        <img class="slide" src="{% static 'img/slide3.png' %}" alt="Трамвай">
+        <img class="slide" src="{% static 'img/slide4.png' %}" alt="Учебный класс">
+    </div>
+    <button class="slider-btn slider-prev" type="button">Назад</button>
+    <button class="slider-btn slider-next" type="button">Вперед</button>
+</section>
+
+<section class="section-head">
+    <h2>История заявок</h2>
+</section>
+
+{% if applications %}
+    <div class="application-grid">
+        {% for application in applications %}
+            <article class="card application-card">
+                <div class="application-top">
+                    <h3>Заявка #{{ application.id }}</h3>
+                    <span class="badge rounded-pill text-bg-success">{{ application.status }}</span>
+                </div>
+                <dl>
+                    <div><dt>Курс</dt><dd>{{ application.course.title }}</dd></div>
+                    <div><dt>Дата начала</dt><dd>{{ application.start_date|date:'d.m.Y' }}</dd></div>
+                    <div><dt>Время начала</dt><dd>{{ application.start_time|time:'H:i' }}</dd></div>
+                    <div><dt>Оплата</dt><dd>{{ application.payment_method }}</dd></div>
+                </dl>
+                {% if application.status == 'Обучение завершено' and not application.review %}
+                    <a class="btn btn-secondary w-100" href="{% url 'review' application.id %}">Оставить отзыв</a>
+                {% elif application.review %}
+                    <p class="review-note">Отзыв оставлен: {{ application.review.rating }}/5</p>
+                {% endif %}
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state card">
+        <h3>Заявок пока нет</h3>
+        <p>Выберите подходящий курс и отправьте первую заявку.</p>
+        <a class="btn btn-primary" href="{% url 'create_application' %}">Создать заявку</a>
+    </div>
+{% endif %}
+{% endblock %}

@@ -11,7 +11,7 @@
 <body>
     <header class="site-header">
         <a class="brand" href="{% url 'index' %}">
-            <span class="brand-mark">ПРФ</span>
+            <img class="brand-mark" src="{% static 'img/logo.png' %}" alt="Трамвай">
             <span>Пассажиры РФ</span>
         </a>
         <nav class="top-nav">
@@ -19,7 +19,9 @@
                 <a href="{% url 'profile' %}">Личный кабинет</a>
                 <a href="{% url 'create_application' %}">Запись на курс</a>
                 {% if user.username == 'Admin26' %}
-                    <a href="{% url 'admin_panel' %}">Панель администратора</a>
+                    
+                    <a href="{% url 'admin:index' %}">Перейти в админ-панель</a>
+                    
                 {% endif %}
                 <a class="nav-logout" href="{% url 'logout' %}">Выйти</a>
             {% else %}

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Панель администратора | Пассажиры РФ{% endblock %}
+{% block content %}
+<section class="admin-head">
+    <div>
+        <p class="eyebrow">Администратор</p>
+        <h1>Панель заявок на обучение</h1>
+    </div>
+    <form class="admin-filters" method="get">
+        <select class="form-select" name="status">
+            <option value="">Все статусы</option>
+            {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <select class="form-select" name="sort">
+            <option value="desc" {% if sort == 'desc' %}selected{% endif %}>Сначала новые</option>
+            <option value="asc" {% if sort == 'asc' %}selected{% endif %}>Сначала старые</option>
+        </select>
+        <button class="btn btn-secondary" type="submit">Применить</button>
+    </form>
+</section>
+
+<section class="card table-card">
+    <div class="table-scroll">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ФИО</th>
+                    <th>Телефон</th>
+                    <th>E-mail</th>
+                    <th>Курс</th>
+                    <th>Дата начала</th>
+                    <th>Время начала</th>
+                    <th>Оплата</th>
+                    <th>Статус</th>
+                    <th>Создана</th>
+                    <th>Действие</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in page_obj %}
+                    <tr>
+                        <td>#{{ application.id }}</td>
+                        <td>{{ application.user.profile.full_name }}</td>
+                        <td>{{ application.user.profile.phone }}</td>
+                        <td>{{ application.user.profile.email }}</td>
+                        <td>{{ application.course.title }}</td>
+                        <td>{{ application.start_date|date:'d.m.Y' }}</td>
+                        <td>{{ application.start_time|time:'H:i' }}</td>
+                        <td>{{ application.payment_method }}</td>
+                        <td><span class="badge rounded-pill text-bg-success">{{ application.status }}</span></td>
+                        <td>{{ application.created_at|date:'d.m.Y H:i' }}</td>
+                        <td>
+                            <form class="status-form" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="application_id" value="{{ application.id }}">
+                                <select class="form-select form-select-sm" name="status">
+                                    {% for value, label in status_choices %}
+                                        <option value="{{ value }}" {% if application.status == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button class="btn btn-primary btn-sm" type="submit">Сохранить</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="11" class="table-empty">Заявки не найдены</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+{% if page_obj.paginator.num_pages > 1 %}
+    <nav class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?status={{ status_filter }}&sort={{ sort }}&page={{ page_obj.previous_page_number }}">Назад</a>
+        {% endif %}
+        <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?status={{ status_filter }}&sort={{ sort }}&page={{ page_obj.next_page_number }}">Вперед</a>
+        {% endif %}
+    </nav>
+{% endif %}
+{% endblock %}
